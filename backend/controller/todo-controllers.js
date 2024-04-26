@@ -85,10 +85,44 @@ const getUserTodo = async ( req, res ) => {
 
         const dbTodo = await TodoModel.find({
             userId: userId
+        }).sort({
+            createdAt: -1
         });
 
         return res.json({
             message: "Task Fetched successfully",
+            success: true,
+            dbTodo
+        });
+
+    }
+    catch( err ){
+        return res.json({
+            message: err.message,
+            success: false
+        });
+    }
+}
+
+const getUserSearchTodo = async ( req, res ) => {
+
+    try{
+
+        const userId = req.userId;
+        const {search} = req.body;
+
+        const dbTodo = await TodoModel.find({
+            userId: userId,
+            task:{
+                $regex: search,
+                $options:"i"
+            }
+        }).sort({
+            createdAt: -1
+        });
+
+        return res.json({
+            message: "Search Task Fetched successfully",
             success: true,
             dbTodo
         });
@@ -150,4 +184,4 @@ const deleteUserTodo = async ( req, res ) => {
     }
 }
 
-module.exports = { addTodo , editTodo, getSingleTodo, getUserTodo, deleteSingleTodo, deleteUserTodo};
+module.exports = { addTodo , editTodo, getSingleTodo, getUserTodo, deleteSingleTodo, deleteUserTodo, getUserSearchTodo};
