@@ -45,8 +45,30 @@ function Dashboard() {
       const data = await res.data;
 
       if( data.success){
-        toast.success(data.message);
+        // toast.success(data.message);
         setTodos(data.dbTodo);
+      }
+      else{
+        toast.error(data.message);
+      }
+    }
+    catch(err){
+      toast.error(err.message);
+    }
+  }
+
+  const deleteTodo = async (id) => {
+    try{
+      const res = await axios.delete(`${baseURL}/api/todo/delete/${id}`,{
+        headers:{
+          Authorization: token
+        }
+      });
+      const data = await res.data;
+
+      if( data.success){
+        toast.success(data.message);
+        getUserSearchTodo();
       }
       else{
         toast.error(data.message);
@@ -85,6 +107,13 @@ function Dashboard() {
             <Link to={`/edit/${todo._id}`}>
               Edit
             </Link>
+            <button
+            onClick={() => {
+              deleteTodo(todo._id);
+            }}
+            >
+              Delete
+            </button>
           </div>
         ))
       }
